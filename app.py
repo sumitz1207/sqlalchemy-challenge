@@ -11,7 +11,7 @@ from flask import Flask, jsonify
 
 
 #setup engine from hawaii sqlite
-engine = create_engine("sqlite:///hawaii.sqlite")
+engine = create_engine("sqlite:///Resources/hawaii.sqlite")
 
 #reflect using automap base
 Base = automap_base()
