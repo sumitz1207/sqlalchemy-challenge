@@ -1,5 +1,5 @@
-import datetime as dt
 import numpy as np
+import datetime as dt
 import pandas as pd
 
 import sqlalchemy
@@ -31,7 +31,7 @@ app = Flask(__name__)
 
 
 
-# Flask Routes
+# Flask Routes and welcome text
 @app.route("/")
 def welcome():
     return (
@@ -53,7 +53,8 @@ def precipitation():
     rain_list = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= last).all()
 
     #create dictionary of rain and return
-    return jsonify({date: prcp for date, prcp in rain_list})
+    rain_dict = {date: prcp for date, prcp in rain_list}
+    return jsonify(rain_dict)
 
 
 @app.route("/api/v1.0/stations")
@@ -88,14 +89,14 @@ def stats(start=None, end=None):
 
     if not end:
         #calculate results for start
-        results = session.query(*tempstatement).filter(Measurement.date >= start).all()
-        temps = list(np.ravel(results))
-        return jsonify(temps)
+        temp_query = session.query(*tempstatement).filter(Measurement.date >= start).all()
+        list_temperature = list(np.ravel(temp_query))
+        return jsonify(list_temperature)
 
     #query runs given both end and start
-    results = session.query(*tempstatement).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
-    temps = list(np.ravel(results))
-    return jsonify(temps=temps)
+    temp_query = session.query(*tempstatement).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    list_temperature = list(np.ravel(temp_query))
+    return jsonify(temps=list_temperature)
 
 #run app
 if __name__ == '__main__':
