@@ -82,21 +82,25 @@ def temperatures():
 
 
 @app.route("/api/v1.0/temp/<start>")
-@app.route("/api/v1.0/temp/<start>/<end>")
-def minavgmax(start=None, end=None):
+def startonly(start=None):
     #statement to get measurement values
     tempstatement = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
-    if not end:
-        #calculate results for start
-        temp_query = session.query(*tempstatement).filter(Measurement.date >= start).all()
-        list_temperature = list(np.ravel(temp_query))
-        return jsonify(list_temperature)
+    #calculate results for start
+    temp_query = session.query(*tempstatement).filter(Measurement.date >= start).all()
+    list_temperature = list(np.ravel(temp_query))
+    return jsonify(list_temperature)
+
+
+@app.route("/api/v1.0/temp/<start>/<end>")
+def startend(start=None, end=None):
+    #statement to get measurement values
+    tempstatement2 = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
     #query runs given both end and start
-    temp_query = session.query(*tempstatement).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
-    list_temperature = list(np.ravel(temp_query))
-    return jsonify(temps=list_temperature)
+    temp_query2 = session.query(*tempstatement2).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    list_temperature2 = list(np.ravel(temp_query2))
+    return jsonify(list_temperature2)
 
 #run app
 if __name__ == '__main__':
