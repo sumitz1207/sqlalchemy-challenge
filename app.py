@@ -83,7 +83,7 @@ def temperatures():
 
 @app.route("/api/v1.0/temp/<start>")
 @app.route("/api/v1.0/temp/<start>/<end>")
-def stats(start=None, end=None):
+def minavgmax(start=None, end=None):
     #statement to get measurement values
     tempstatement = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
 
