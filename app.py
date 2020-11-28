@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
 
 
-#setup engine from hawaii sqlite
+#setup engine from hawaii sqlite in resources folder
 engine = create_engine("sqlite:///Resources/hawaii.sqlite")
 
 #reflect using automap base
@@ -67,11 +67,11 @@ def stations():
 
 
 @app.route("/api/v1.0/tobs")
-def temp_monthly():
+def temperatures():
     #calculate temperature observations of last year
     last = dt.date(2017, 8, 23) - dt.timedelta(days=365)
 
-    #query of all tobs from the last year
+    #query of all the tobs from the last year
     tobs_query = session.query(Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= last).all()
 
     #convert query object to list
