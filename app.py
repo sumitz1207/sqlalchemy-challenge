@@ -89,8 +89,8 @@ def starter(start):
     #create query given start date only and calculate the min max and avg
     temp_list1 = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).all()
     session.close()
-
-    return jsonify(temp_list1)
+    final_list1 = list(np.ravel(temp_list1))
+    return jsonify(final_list1)
 
 @app.route("/api/v1.0/temp/<start>/<end>")
 def startend(start, end):
@@ -99,8 +99,8 @@ def startend(start, end):
 
     temp_list2=session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
     session.close()
-    
-    return jsonify(temp_list2)
+    final_list2 = list(np.ravel(temp_list2))
+    return jsonify(final_list2)
 
 #run app
 if __name__ == '__main__':
