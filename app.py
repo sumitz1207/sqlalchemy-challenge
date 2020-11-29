@@ -84,32 +84,23 @@ def temperatures():
 
 
 @app.route("/api/v1.0/temp/<start>")
-def startonly(start=None):
+def starter(start):
     session = Session(engine)
-    #query and save    
-    query_temp = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station == 'USC00519281', Measurement.date >= start).all()
+    #create query given start date only and calculate the min max and avg
+    temp_list1 = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).all()
     session.close()
 
-    #create a list out of query
-    list_temperature = list(np.ravel(query_temp))
-    final_list = ['USC00519281', start]
-    final_list.append(list_temperature)
-    return jsonify(final_list)
-
+    return jsonify(temp_list1)
 
 @app.route("/api/v1.0/temp/<start>/<end>")
-def startend(start=None, end=None):
+def startend(start, end):
     session = Session(engine)
-    #query and save
-    query_temp2 = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station == 'USC00519281', Measurement.date >= start, Measurement.date <= end).all()
-    # close the session
-    session.close()
+    #create query given start date and end date as range and calculate the min max and avg
 
-    #create a list out of query
-    list_temp = list(np.ravel(query_temp2))
-    sum_list = ['USC00519281', start, end]
-    list_temp += sum_list
-    return jsonify(list_temp)
+    temp_list2=session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    session.close()
+    
+    return jsonify(temp_list2)
 
 #run app
 if __name__ == '__main__':
