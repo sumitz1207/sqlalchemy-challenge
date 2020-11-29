@@ -32,7 +32,7 @@ app = Flask(__name__)
 @app.route("/")
 def welcome():
     return (
-        f"Climate Analysis Home<br/>"
+        f"Welcome to Climate Analysis Home<br/>"
         f"The List of Available Routes Are:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
@@ -85,30 +85,31 @@ def temperatures():
 
 @app.route("/api/v1.0/temp/<start>")
 def startonly(start=None):
-    #statement to get measurement values
-    tempstatement = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
     session = Session(engine)
-
-    #calculate results for start
-    temp_query = session.query(*tempstatement).filter(Measurement.date >= start).all()
+    #query and save    
+    query_temp = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station == 'USC00519281', Measurement.date >= start).all()
     session.close()
 
-    list_temperature = list(np.ravel(temp_query))
-    return jsonify(list_temperature)
+    #create a list out of query
+    list_temperature = list(np.ravel(query_temp))
+    final_list = ['USC00519281', start]
+    final_list.append(list_temperature)
+    return jsonify(final_list)
 
 
 @app.route("/api/v1.0/temp/<start>/<end>")
 def startend(start=None, end=None):
-    #statement to get measurement values
-    tempstatement2 = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
     session = Session(engine)
-
-    #query runs given both end and start
-    temp_query2 = session.query(*tempstatement2).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    #query and save
+    query_temp2 = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station == 'USC00519281', Measurement.date >= start, Measurement.date <= end).all()
+    # close the session
     session.close()
 
-    list_temperature2 = list(np.ravel(temp_query2))
-    return jsonify(list_temperature2)
+    #create a list out of query
+    list_temp = list(np.ravel(query_temp2))
+    sum_list = ['USC00519281', start, end]
+    list_temp += sum_list
+    return jsonify(list_temp)
 
 #run app
 if __name__ == '__main__':
